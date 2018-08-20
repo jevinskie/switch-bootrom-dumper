@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#include "srec-dump.h"
+#include "dump.h"
 
 #if defined(__APPLE__)
 extern uint8_t __dso_handle;
@@ -12,6 +12,6 @@ extern uint8_t __executable_start;
 #endif
 
 int main(int argc, const char **argv) {
-	srec_dump(EXE_START, 4096);
+	dump(EXE_START, 4096);
 	return 0;
 }
