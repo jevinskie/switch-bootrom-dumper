@@ -12,6 +12,6 @@ extern uint8_t __executable_start;
 #endif
 
 int main(int argc, const char **argv) {
-	dump(EXE_START, 4096);
+	dump("exe", EXE_START, 4096);
 	return 0;
 }
