@@ -11,6 +11,11 @@ target_compile_options(dump-tester PRIVATE -Wall -Wextra -std=gnu11)
 target_link_libraries(dump-tester dump)
 
 add_executable(text-dump-to-elf text-dump-to-elf.cpp)
-target_link_libraries(text-dump-to-elf elfio)
+target_link_libraries(text-dump-to-elf elfio dump)
+set_target_properties(text-dump-to-elf PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED YES
+    CXX_EXTENSIONS NO
+)
 
-install(TARGETS text-dump-to-elf RUNTIME DESTINATION .)
+install(TARGETS dump-tester text-dump-to-elf RUNTIME DESTINATION .)

@@ -1,5 +1,9 @@
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdint.h>
 
 #define DUMP_NAME_SIZE 32
@@ -14,3 +18,7 @@ typedef struct dump_record {
 } __attribute__((packed)) dump_record_t;
 
 void dump(const char name[DUMP_NAME_SIZE], void *addr, uint32_t len);
+
+#ifdef __cplusplus
+}
+#endif
