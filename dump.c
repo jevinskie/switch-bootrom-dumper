@@ -11,6 +11,7 @@ void dump_helper(const char name[DUMP_NAME_SIZE], void *addr, uint32_t len, dump
 	assert(len <= DUMP_DATA_SIZE);
 	assert(strlen(name) + 1 <= DUMP_NAME_SIZE);
 
+	rec->addr = htonll((uintptr_t)addr);
 	rec->len = htonl(len);
 	memset(rec->name, DUMP_NAME_SIZE, 0);
 	strncpy(rec->name, name, DUMP_NAME_SIZE);
