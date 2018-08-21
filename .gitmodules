@@ -1,3 +1,9 @@
 [submodule "ELFIO"]
 	path = ELFIO
 	url = https://github.com/jevinskie/ELFIO
+[submodule "cxx-prettyprint"]
+	path = cxx-prettyprint
+	url = https://github.com/louisdx/cxx-prettyprint
+[submodule "fmt"]
+	path = fmt
+	url = https://github.com/fmtlib/fmt
