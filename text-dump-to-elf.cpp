@@ -16,6 +16,17 @@
 #include "dump.h"
 #include "z85.h"
 
+struct merged_dump_rec {
+	std::string name;
+	std::vector<uint8_t> data;
+
+	friend std::ostream& operator<<(std::ostream &o, const merged_dump_rec &rec) {
+		return o << fmt::format("{{ name: '{}' len: 0x{:x} }}",
+			rec.name, rec.data.size());
+	}
+
+};
+
 int main(int argc, const char **argv) {
 	assert(argc == 3);
 
@@ -37,6 +48,31 @@ int main(int argc, const char **argv) {
 	}
 
 	fmt::print("dump_recs: {}\n", dump_recs);
+
+	std::map<uint64_t, merged_dump_rec> dump_parts;
+
+	for (const auto &i : dump_recs) {
+		bool concatenated = false;
+		for (auto &j : dump_parts) {
+			if (i.first == j.first + j.second.data.size()) {
+				// i is adjacent after j
+				j.second.data.insert(j.second.data.end(), i.second.data, i.second.data + i.second.len);
+				concatenated = true;
+				break;
+			}
+			if (i.first + i.second.len == j.first) {
+				// i is adjacent before j
+				j.second.data.insert(j.second.data.begin(), i.second.data, i.second.data + i.second.len);
+				concatenated = true;
+				break;
+			}
+		}
+		if (concatenated)
+			continue;
+		dump_parts[i.first] = {.name = i.second.name, .data = std::vector<uint8_t>{i.second.data, i.second.data + i.second.len}};
+	}
+
+	fmt::print("dump_parts: {}\n", dump_parts);
 
 	return 0;
 }

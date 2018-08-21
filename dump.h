@@ -19,8 +19,8 @@ typedef struct dump_record {
 
 #ifdef __cplusplus
 	friend std::ostream& operator<<(std::ostream &o, const dump_record &rec) {
-		return o << fmt::format("{{ name: '{}' addr: {} len: {:x} }}",
-			rec.name, (void *)rec.addr, rec.len);
+		return o << fmt::format("{{ name: '{}' addr: 0x{:08x} len: 0x{:x} }}",
+			rec.name, rec.addr, rec.len);
 	}
 #endif
 

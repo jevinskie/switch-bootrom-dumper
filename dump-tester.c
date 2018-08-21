@@ -16,7 +16,7 @@ extern void *__data_start;
 #endif
 
 int main(int argc, const char **argv) {
-	dump("exe", EXE_START, 4096);
-	dump("data", DATA_START, 4096);
+	dump("exe", EXE_START, 2 * DUMP_DATA_SIZE + 128);
+	dump("data", DATA_START, 3 * DUMP_DATA_SIZE + 256);
 	return 0;
 }
