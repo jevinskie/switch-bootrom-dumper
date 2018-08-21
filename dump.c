@@ -20,7 +20,7 @@ void dump_helper(const char name[DUMP_NAME_SIZE], void *addr, uint32_t len, dump
 
 void dump(const char name[DUMP_NAME_SIZE], void *addr, uint32_t len) {
 	dump_record_t rec;
-	char z85_buf[Z85_BUF_SIZE(sizeof(rec))];
+	char z85_buf[Z85_ENC_BUF_SIZE(sizeof(rec))];
 
 	assert(strlen(name) + 1 <= DUMP_NAME_SIZE);
 
