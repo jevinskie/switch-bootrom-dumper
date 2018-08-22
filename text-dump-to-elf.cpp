@@ -8,6 +8,7 @@
 #include <vector>
 
 #include <elfio/elfio.hpp>
+using namespace ELFIO;
 
 #include "cxx-prettyprint/prettyprint.hpp"
 #include "fmt/format.h"
@@ -73,6 +74,29 @@ int main(int argc, const char **argv) {
 	}
 
 	fmt::print("dump_parts: {}\n", dump_parts);
+
+	elfio writer;
+	writer.create(ELFCLASS64, ELFDATA2LSB);
+
+	writer.set_os_abi(ELFOSABI_LINUX);
+	writer.set_type(ET_EXEC);
+	writer.set_machine(EM_X86_64);
+
+	for (const auto &dp : dump_parts) {
+		auto sec = writer.sections.add("." + dp.second.name);
+    	sec->set_type(SHT_PROGBITS);
+    	sec->set_flags(SHF_ALLOC | SHF_EXECINSTR);
+    	sec->set_data(reinterpret_cast<const char *>(dp.second.data.data()), dp.second.data.size());
+    	auto seg = writer.segments.add();
+		seg->set_type(PT_LOAD);
+		seg->set_virtual_address(dp.first);
+		seg->set_physical_address(dp.first);
+		seg->set_flags(PF_X | PF_R);
+		// seg->set_align( 0x1000 );
+		seg->add_section_index(sec->get_index(), sec->get_addr_align());
+	}
+
+	writer.save(argv[2]);
 
 	return 0;
 }
