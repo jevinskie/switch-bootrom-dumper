@@ -7,6 +7,12 @@
 #include <string>
 #include <vector>
 
+using namespace std::string_literals;
+
+#if defined(__GNUC__)
+#pragma GCC diagnostic ignored "-Wgnu-string-literal-operator-template"
+#endif
+
 #include <elfio/elfio.hpp>
 using namespace ELFIO;
 
@@ -29,9 +35,25 @@ struct merged_dump_rec {
 };
 
 int main(int argc, const char **argv) {
-	assert(argc == 3);
+	assert(argc == 4);
 
 	std::ifstream in_text{argv[1]};
+
+	unsigned char elf_class;
+	Elf_Half elf_machine;
+
+	if ("arm32"s == argv[3]) {
+		elf_class = ELFCLASS32;
+		elf_machine = EM_ARM;
+	} else if ("arm64"s == argv[3]) {
+		elf_class = ELFCLASS64;
+		elf_machine = EM_AARCH64;
+	} else if ("x86-64"s == argv[3]) {
+		elf_class = ELFCLASS64;
+		elf_machine = EM_X86_64;
+	} else {
+		assert(!"unknown arch");
+	}
 
 	std::map<uint64_t, dump_record_t> dump_recs;
 
@@ -76,22 +98,22 @@ int main(int argc, const char **argv) {
 	fmt::print("dump_parts: {}\n", dump_parts);
 
 	elfio writer;
-	writer.create(ELFCLASS64, ELFDATA2LSB);
+	writer.create(elf_class, ELFDATA2LSB);
 
-	writer.set_os_abi(ELFOSABI_LINUX);
+	writer.set_os_abi(ELFOSABI_NONE);
 	writer.set_type(ET_EXEC);
-	writer.set_machine(EM_X86_64);
+	writer.set_machine(elf_machine);
 
 	for (const auto &dp : dump_parts) {
 		auto sec = writer.sections.add("." + dp.second.name);
-    	sec->set_type(SHT_PROGBITS);
-    	sec->set_flags(SHF_ALLOC | SHF_EXECINSTR);
-    	sec->set_data(reinterpret_cast<const char *>(dp.second.data.data()), dp.second.data.size());
-    	auto seg = writer.segments.add();
+		sec->set_type(SHT_PROGBITS);
+		sec->set_flags(SHF_ALLOC);
+		sec->set_data(reinterpret_cast<const char *>(dp.second.data.data()), dp.second.data.size());
+		auto seg = writer.segments.add();
 		seg->set_type(PT_LOAD);
 		seg->set_virtual_address(dp.first);
 		seg->set_physical_address(dp.first);
-		seg->set_flags(PF_X | PF_R);
+		seg->set_flags(PF_X | PF_R | PF_W);
 		// seg->set_align( 0x1000 );
 		seg->add_section_index(sec->get_index(), sec->get_addr_align());
 	}

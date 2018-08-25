@@ -19,4 +19,12 @@ set_target_properties(text-dump-to-elf PROPERTIES
     CXX_EXTENSIONS YES
 )
 
-install(TARGETS dump-tester text-dump-to-elf RUNTIME DESTINATION .)
+add_executable(dump-miniloaders dump-miniloaders.cpp)
+target_link_libraries(dump-miniloaders elfio fmt)
+set_target_properties(dump-miniloaders PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED YES
+    CXX_EXTENSIONS YES
+)
+
+install(TARGETS dump-tester text-dump-to-elf dump-miniloaders RUNTIME DESTINATION .)
