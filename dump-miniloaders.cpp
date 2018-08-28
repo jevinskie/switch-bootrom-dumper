@@ -20,8 +20,11 @@ using namespace ELFIO;
 
 #include "miniloader/tegra114-miniloader.h"
 #include "miniloader/tegra124-miniloader.h"
+#include "miniloader/tegra132-miniloader.h"
 #include "miniloader/tegra20-miniloader.h"
+#include "miniloader/tegra210-miniloader.h"
 #include "miniloader/tegra30-miniloader.h"
+#include "miniloader/wheelie-payloads.h"
 
 struct miniloader {
 	std::string name;
@@ -55,18 +58,46 @@ struct miniloader miniloaders[] {
 		.irom_size = 48 * 1024,
 	},
 	{
+		.name = "tegra132",
+		.payload = {miniloader_tegra132, miniloader_tegra132 + sizeof(miniloader_tegra132)},
+		.entry = TEGRA132_MINILOADER_ENTRY,
+		.iram_start = 0x40000000,
+		.iram_size = 256 * 1024,
+		// tegra 2 dummy values
+		.irom_start = 0xFFF00000,
+		.irom_size = 48 * 1024,
+	},
+	{
 		.name = "tegra20",
 		.payload = {miniloader_tegra20, miniloader_tegra20 + sizeof(miniloader_tegra20)},
-		.entry = TEGRA114_MINILOADER_ENTRY,
+		.entry = TEGRA20_MINILOADER_ENTRY,
 		.iram_start = 0x40000000,
 		.iram_size = 256 * 1024,
 		.irom_start = 0xFFF00000,
 		.irom_size = 48 * 1024,
 	},
 	{
+		.name = "tegra210",
+		.payload = {miniloader_tegra210, miniloader_tegra210 + sizeof(miniloader_tegra210)},
+		.entry = TEGRA210_MINILOADER_ENTRY,
+		.iram_start = 0x40000000,
+		.iram_size = 256 * 1024,
+		.irom_start = 0x00100000,
+		.irom_size = 96 * 1024,
+	},
+	{
 		.name = "tegra30",
 		.payload = {miniloader_tegra30, miniloader_tegra30 + sizeof(miniloader_tegra30)},
 		.entry = TEGRA30_MINILOADER_ENTRY,
+		.iram_start = 0x40000000,
+		.iram_size = 256 * 1024,
+		.irom_start = 0xFFF00000,
+		.irom_size = 48 * 1024,
+	},
+	{
+		.name = "wheelie",
+		.payload = {plaintxt_miniloader, plaintxt_miniloader + sizeof(plaintxt_miniloader)},
+		.entry = TEGRA20_MINILOADER_ENTRY,
 		.iram_start = 0x40000000,
 		.iram_size = 256 * 1024,
 		.irom_start = 0xFFF00000,
