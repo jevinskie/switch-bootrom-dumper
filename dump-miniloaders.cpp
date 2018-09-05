@@ -18,6 +18,7 @@ using namespace ELFIO;
 #include "fmt/format.h"
 #include "fmt/ostream.h"
 
+#include "miniloader/n7-miniloader.h"
 #include "miniloader/tegra114-miniloader.h"
 #include "miniloader/tegra124-miniloader.h"
 #include "miniloader/tegra132-miniloader.h"
@@ -37,6 +38,15 @@ struct miniloader {
 };
 
 struct miniloader miniloaders[] {
+	{
+		.name = "n7",
+		.payload = {miniloader_n7, miniloader_n7 + sizeof(miniloader_n7)},
+		.entry = N7_MINILOADER_ENTRY,
+		.iram_start = 0x40000000,
+		.iram_size = 256 * 1024,
+		.irom_start = 0xFFF00000,
+		.irom_size = 48 * 1024,
+	},
 	{
 		.name = "tegra114",
 		.payload = {miniloader_tegra114, miniloader_tegra114 + sizeof(miniloader_tegra114)},
